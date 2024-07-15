@@ -10,9 +10,10 @@ namespace Stack
     {
         public static void Merge(this Stack stack1, Stack stack2)
         {
-            foreach (var st2 in stack2.stack.OrderDescending())
+            while (stack2.Size != 0)
             {
-                stack1.stack.Add(st2);
+                stack1.Add(stack2.Top);
+                stack2.Pop();
             }
         }
     }

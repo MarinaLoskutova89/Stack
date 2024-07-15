@@ -8,62 +8,68 @@ namespace Stack
 {
     public class Stack
     {
-        static class StackItem 
+        private StackItem? _head;
+        private int _size;
+        private class StackItem
         {
-            private static string _currentValue;
+            public StackItem(string s)
+            {
+                this.CurrentValue = s;
+            }
+            public string CurrentValue { get; }
+            public StackItem? PreviouseValue { get; set; }
         }
-
-        public List<string> stack;
 
         public Stack(params string[] input)
         {
-            var listOfInputs = new List<string>();
             foreach (string s in input)
             {
-                listOfInputs.Add(s);
+                Add(s);
             }
-            this.stack = listOfInputs;
         }
 
-        public List<string> Add(string inputString)
+        public void Add(string inputString)
         {
-            stack.Add(inputString);
-            return stack;
+            var newHead = new StackItem(inputString);
+
+            newHead.PreviouseValue = _head;
+            _head = newHead;
+            _size++;
         }
 
         public string Pop()
         {
-            string topValue;
-            try 
+            string? removedValue = _head?.CurrentValue;
+            try
             {
-                topValue = stack.Last();
-                stack.Remove(topValue);
+                if (_head != null)
+                {
+                    _head = _head?.PreviouseValue;
+                    _size--;
+                }
+                else throw new Exception("Empty stack!");
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Empty stack!");
+                Console.WriteLine(ex.Message);
             }
-            return topValue;
+
+            return removedValue;
         }
 
-        public int Size { get => stack.Count; }
-        public string Top
-        {
-            get
-            {
-                if (stack.Count == 0) return "null";
-                else return stack.Last();
-            }
-        }
+        public int Size { get => _size; }
+        public string? Top { get => _head?.CurrentValue; }
+
         public static Stack Concat(params Stack[] stacks)
         {
             Stack newStack = new Stack();
 
             foreach (Stack st in stacks)
             {
-                foreach (string str in st.stack.OrderDescending())
+                while (st.Size != 0)
                 {
-                    newStack.Add(str);
+                    newStack.Add(st.Top);
+                    st.Pop();
                 }
             }
             return newStack;
